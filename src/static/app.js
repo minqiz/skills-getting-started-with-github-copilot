@@ -36,6 +36,29 @@ document.addEventListener("DOMContentLoaded", () => {
             </ul>
           </div>
         `;
+          const participantsListElement = activityCard.querySelector('.participants-list');
+          Array.from(participantsListElement.children).forEach(function(li) {
+              li.style.listStyleType = 'none'; // Hide bullet point
+              const nameSpan = document.createElement('span');
+              nameSpan.textContent = li.textContent;
+              li.innerHTML = ''; // Clear the existing content
+              li.appendChild(nameSpan);
+
+              const deleteBtn = document.createElement('button');
+              deleteBtn.innerHTML = '🗑️';
+              deleteBtn.title = 'Unregister participant';
+              deleteBtn.style.marginLeft = '8px';
+              deleteBtn.style.background = 'none';
+              deleteBtn.style.border = 'none';
+              deleteBtn.style.cursor = 'pointer';
+              deleteBtn.style.fontSize = '1.1em';
+
+              deleteBtn.addEventListener('click', function() {
+                  li.parentNode.removeChild(li);
+              });
+
+              li.appendChild(deleteBtn);
+          });
 
         activitiesList.appendChild(activityCard);
 
@@ -72,6 +95,8 @@ document.addEventListener("DOMContentLoaded", () => {
         messageDiv.textContent = result.message;
         messageDiv.className = "success";
         signupForm.reset();
+        // Refresh activities to show the new participant
+        fetchActivities();
       } else {
         messageDiv.textContent = result.detail || "An error occurred";
         messageDiv.className = "error";
