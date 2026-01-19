@@ -20,12 +20,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const spotsLeft = details.max_participants - details.participants.length;
 
+        const participantsList = details.participants
+          .map(p => `<li>${p}</li>`)
+          .join("");
+
         activityCard.innerHTML = `
           <h4>${name}</h4>
           <p>${details.description}</p>
           <p><strong>Schedule:</strong> ${details.schedule}</p>
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
+          <div class="participants-section">
+            <strong>Current Participants:</strong>
+            <ul class="participants-list">
+              ${participantsList}
+            </ul>
+          </div>
         `;
+          const participantsListElement = activityCard.querySelector('.participants-list');
+          Array.from(participantsListElement.children).forEach(function(li) {
+              li.style.listStyleType = 'none'; // Hide bullet point
+              const nameSpan = document.createElement('span');
+              nameSpan.textContent = li.textContent;
+              li.innerHTML = ''; // Clear the existing content
+              li.appendChild(nameSpan);
+
+              const deleteBtn = document.createElement('button');
+              deleteBtn.innerHTML = '🗑️';
+              deleteBtn.title = 'Unregister participant';
+              deleteBtn.style.marginLeft = '8px';
+              deleteBtn.style.background = 'none';
+              deleteBtn.style.border = 'none';
+              deleteBtn.style.cursor = 'pointer';
+              deleteBtn.style.fontSize = '1.1em';
+
+              deleteBtn.addEventListener('click', function() {
+                  li.parentNode.removeChild(li);
+              });
+
+              li.appendChild(deleteBtn);
+          });
 
         activitiesList.appendChild(activityCard);
 
@@ -62,6 +95,8 @@ document.addEventListener("DOMContentLoaded", () => {
         messageDiv.textContent = result.message;
         messageDiv.className = "success";
         signupForm.reset();
+        // Refresh activities to show the new participant
+        fetchActivities();
       } else {
         messageDiv.textContent = result.detail || "An error occurred";
         messageDiv.className = "error";
